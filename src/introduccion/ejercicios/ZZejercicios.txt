@@ -1,0 +1,92 @@
+Actividad 1
+
+    Ejecuta el comando `hostname` en la partición `q1` con `srun`: 
+    
+    Con un único proceso. --> $ srun -p q1 -N 1 -n 1 hostname
+                          --> $ srun --partition q1 --nodes=1 --ntasks=1 hostname
+    
+    Con dos procesos iguales. --> $ srun -p q1 -N 1 -n 2 hostname
+    
+    Con dos procesos en distintos nodos. --> $ srun -p q1 -N 2 -n 2 hostname
+    
+    Lanzando un proceso que tenga dos cores reservados. --> $ srun -p q1 -n 1 --cpus-per-task=2 hostname
+                                                        --> $ srun -p q1 -n 1 -c 2 hostname
+
+
+
+Actividad 2
+
+#!/bin/bash
+
+$SBATCH --job-name=cpu_test
+#SBATCH --partition=q1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mail-user=omar4jrz@gmail.com
+#SBATCH --mail-type=BEGIN
+
+#SBATCH --output=salida_%j.out
+#SBATCH --error=error_%j.out
+#SBATCH --time=03:00
+
+echo "Inicio de la prueba en :$(hostname)"
+echo "Hora de inicio: $(date)"
+
+# Ejecuta una tarea que ocupa el 100% de CPU.
+yes > /dev/null
+
+echo "Hora de finalización: $(date)"
+
+
+
+Completa el script base para que:
+
+    El nombre del trabajo sea cpu_test --> $SBATCH --job-name=cpu_test
+    Se ejecute en la partición q1. --> --partition=q1
+    Se ejecute en una sola tarea (proceso). --> #SBATCH --ntasks=1
+    Solicita un único núcleo (threads). --> #SBATCH --cpus-per-task=1
+    Envie una notificación a tu correo cuando inicie el trabajo
+        - #SBATCH --mail-user=omar4jrz@gmail.com
+        - #SBATCH --mail-type=BEGIN
+
+
+Manda el scrip a la cola y contesta lo siguiente:
+
+    ¿Qué comando puedo usar para ver información del trabajo en ejecución? (squeue -u $USER)
+
+    ¿Cómo puedo cancelar mi trabajo? (scancel jobID)
+
+    ¿Qué comando me permite conocer el estado de las particiones del clúster? (sinfo)
+
+    ¿Cuánto tiempo estará la tarea en ejecución si no la cancelo? (Hasta >que alcance el límite de tiempo (-t 5) o sea cancelada manualmente)
+
+
+
+
+------------------------------------------------------------------------------------------
+mi_tarea.sh
+    #!/bin/bash
+    
+    # Este script imprimirá el nombre del nodo y el ID de la tarea asignada
+
+    echo "Hola desde la tarea $SLURM_PROCID" en el nodo $(hostname)
+
+1. Ejecuta "mi_tarea.sh" en una sola tarea
+    srun ./mi_tarea.sh
+
+2. Ejecuta 4 tareas en paralelo
+    srun -n 4 ./mi_tarea.sh
+
+3. Ejecuta en 2 Nodos diferentes
+    srun -N 2 --ntask-per-node=1 ./mi_tarea.sh ?
+
+4. Solicita 2 nodos y ejecuta 2 tareas en cada nodo
+    srun -N 2 --ntask-per-node=2 ./mi_tarea.sh
+
+5. Crea un scritp donde:
+    * solicite 2 nodos
+    * ejecute 3 tareas por nodo
+    * se ejecute el la partición ""
+    * asigna nombre a la tarea 
+    * ejecute ./mi_tarea.sh
+    
